@@ -5,7 +5,7 @@ jobs:
   test-pr:
     runs-on: macos-latest
     env:
-      CACHE_KEY: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
+      CACHE_KEY: gradle-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
     strategy:
       matrix:
         api-level: [23, 29]

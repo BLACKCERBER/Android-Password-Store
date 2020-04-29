@@ -8,7 +8,7 @@ jobs:
   deploy-release-snapshot:
     runs-on: ubuntu-latest
     env:
-      CACHE_KEY: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
+      CACHE_KEY: gradle-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
     - name: Checkout repository
