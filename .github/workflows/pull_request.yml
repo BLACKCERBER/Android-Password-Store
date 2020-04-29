@@ -4,6 +4,8 @@ name: Check pull request
 jobs:
   test-pr:
     runs-on: macos-latest
+    env:
+      CACHE_KEY: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
     strategy:
       matrix:
         api-level: [23, 29]
@@ -17,8 +19,18 @@ jobs:
 
     - uses: actions/cache@v1
       with:
-          path: ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
+          path: ~/.gradle/caches/modules-2
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlemodules
+
+    - uses: actions/cache@v1
+      with:
+          path: ~/.gradle/caches/jars-3
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlejars
+
+    - uses: actions/cache@v1
+      with:
+          path: ~/.gradle/caches/build-cache-1
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlebuildcache
 
     - name: Run unit tests
       run: ./gradlew spotlessCheck test${{ matrix.variant }} lint${{ matrix.variant}} -Dpre-dex=false

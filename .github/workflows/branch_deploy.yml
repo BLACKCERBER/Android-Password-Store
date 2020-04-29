@@ -7,6 +7,8 @@ name: Build debug
 jobs:
   generate-debug-build:
     runs-on: ubuntu-latest
+    env:
+      CACHE_KEY: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
     steps:
     - name: Checkout repository
@@ -22,8 +24,18 @@ jobs:
 
     - uses: actions/cache@v1
       with:
-          path: ~/.gradle/caches
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/build.gradle') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/dependencies.gradle') }}
+          path: ~/.gradle/caches/modules-2
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlemodules
+
+    - uses: actions/cache@v1
+      with:
+          path: ~/.gradle/caches/jars-3
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlejars
+
+    - uses: actions/cache@v1
+      with:
+          path: ~/.gradle/caches/build-cache-1
+          key: ${{ jobs.generate-debug-build.env.CACHE_KEY }}-gradlebuildcache
 
     - name: Download gradle dependencies
       run: ./gradlew dependencies
